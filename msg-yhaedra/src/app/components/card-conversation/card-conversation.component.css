@@ -1,0 +1,25 @@
+.card {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  margin: 0.3rem;
+  padding: 0.2rem;
+  border-radius: 30px;
+}
+
+.card:hover {
+  background: var(--blue-bg-ligth);
+}
+
+.roundedImage {
+  clip-path: circle(50% at 50% 50%);
+  object-fit: cover;
+  display: block;
+  margin-right: 0.8rem;
+}
+
+h3 {
+  vertical-align: middle;
+}
+
+

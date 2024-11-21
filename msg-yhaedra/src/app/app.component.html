@@ -1,0 +1,12 @@
+<main class="main">
+  <app-menu-connection *ngIf="connection"></app-menu-connection>
+  <div class="content">
+    <div class="left-side">
+      <app-menu-conversation></app-menu-conversation>
+    </div>
+    <div class="divider" role="separator" aria-label="Divider"></div>
+    <div class="right-side">
+      <router-outlet />
+    </div>
+  </div>
+</main>

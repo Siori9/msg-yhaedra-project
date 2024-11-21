@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="main">
+    <div class="menu-button">
+      <button [ngStyle]="{'border-bottom': menu == 'login' ? 'solid 1px white': '0'}" (click)="changeMenu('login')">Log in</button>
+      <button [ngStyle]="{'border-bottom': menu == 'sigin' ? 'solid 1px white': '0'}" (click)="changeMenu('sigin')">Sign in</button>
+    </div>
+    <app-login *ngIf="menu == 'login'"></app-login>
+    <app-signin *ngIf="menu == 'sigin'"></app-signin>
+  </div>
+</div>

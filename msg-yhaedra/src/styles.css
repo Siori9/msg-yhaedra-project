@@ -1,0 +1,13 @@
+:root {
+  --main-bg-color: #2b2d32;
+  --blue-bg-ligth: #305557;
+  --blue-bg-dark: #4a7a7c;
+}
+
+body, html {
+  background: var(--main-bg-color);
+  color: white;
+  min-height: 100vh;
+  height: auto;
+  margin: 0;
+}

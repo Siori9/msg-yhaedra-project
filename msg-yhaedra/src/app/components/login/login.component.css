@@ -1,0 +1,33 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+}
+
+.form input  {
+  margin: 0 auto 1%;
+  width: 30%;
+  font-size: large;
+  border-radius: 10px;
+}
+
+.form button {
+  margin: 4% auto;
+  width: 30%;
+  font-size: large;
+  border-radius: 10px;
+  background-color: #43777a;
+  color: white;
+  border: white solid 1px;
+  padding: 1%;
+}
+
+.form button:hover {
+  background-color: var(--blue-bg-ligth);
+}
+
+.error {
+  color: #fa8383;
+  font-weight: bold;
+}
