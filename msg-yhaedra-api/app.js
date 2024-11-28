@@ -9,9 +9,9 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: 'http://localhost:4200', // Remplacez par l'URL de votre application Angular
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes HTTP autorisées
-    allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use('/users', userRoutes);

@@ -3,6 +3,8 @@ import {CardConversationComponent} from '../card-conversation/card-conversation.
 import {NgForOf, NgStyle} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ApiService} from '../../api.service';
+import {join} from '@angular/compiler-cli';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-menu-conversation',
@@ -16,19 +18,16 @@ import {ApiService} from '../../api.service';
   styleUrl: './menu-conversation.component.css'
 })
 export class MenuConversationComponent {
-  data = [
-    {imgUrl: "https://i.pinimg.com/236x/73/db/59/73db599ec8e2962ef2f6d0921599df5b.jpg", name: "Lisa", },
-    {imgUrl: "https://i.pinimg.com/236x/d3/0c/70/d30c704d6ce701420c32b18d5167426e.jpg", name: "Emily"}
-  ]
-  idSelect = 0;
 
   conversations: any[] = [];
-
-  constructor(private apiService: ApiService) {}
+  currentConversationId: string | null = null;
 
   ngOnInit(): void {
     this.loadConversations();
+    this.currentConversationId = this.route.snapshot.paramMap.get('convId');
   }
+
+  constructor(private apiService: ApiService, private router: Router, private route: ActivatedRoute) {}
 
   loadConversations(): void {
     this.apiService.getConversations().subscribe(
@@ -40,6 +39,24 @@ export class MenuConversationComponent {
         console.error('Erreur lors du chargement des conversations:', error);
       }
     );
+  }
+
+  changeConversation(id: string){
+    this.currentConversationId = id
+    this.router.navigate([`/conversations`,id]);
+    let currentUrl = this.router.url;
+  }
+
+  selectConversation(conversation: { id: string }): boolean {
+    return this.currentConversationId === conversation.id;
+  }
+
+  getConversationName(array: Array<{id: string, name: string}>): string {
+    return array.filter((p) => p.id != localStorage.getItem("userId") ).map((x) => x.name).join(',').substring(0,10);
+  }
+
+  getUrl(array: Array<{id: string, imgUrl: string}>): string {
+    return array.filter((u) => u.id != localStorage.getItem("userId"))[0].imgUrl;
   }
 
   participants = "";
@@ -55,13 +72,13 @@ export class MenuConversationComponent {
 
   createConversation(): void {
     let listParticipants = this.participants.split(",");
-    console.log(listParticipants.toString());
     if (listParticipants.length === 0) {
       return;
     }
     this.apiService.createConversation(listParticipants).subscribe(
       (response) => {
         console.log('Nouvelle conversation :', response);
+        window.location.reload();
       },
       (error) => {
         console.error('Erreur lors de la création de la conversation :', error);
@@ -69,4 +86,8 @@ export class MenuConversationComponent {
     );
   }
 
+  deconnection(){
+    localStorage.removeItem('userId');
+    window.location.reload();
+  }
 }

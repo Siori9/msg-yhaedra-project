@@ -1,12 +1,13 @@
 <div class="menu-card">
+  <button class="open-popup" (click)="deconnection()">Deconnection</button>
   <button class="open-popup" (click)="newConversation()">Add conversation</button>
   <div class="form-popup" id="formParticipants" [ngStyle]="{'visibility': visiblePopup? 'visible':'collapse'}">
     <h3>Add participants</h3>
-    <textarea [(ngModel)]="participants" placeholder="idUser1,idUser2,..."></textarea>
+    <textarea [(ngModel)]="participants" placeholder="email1,email2,..."></textarea>
     <div>
       <button type="submit" class="btn" (click)="createConversation()">Create</button>
       <button type="button" (click)="closePopup()">Close</button>
     </div>
   </div>
-  <app-card-conversation *ngFor="let c of conversations; index as i" [select]="i == idSelect"  [imgUrl]="c.participants[0].imgUrl" [name]="c.participants.join(',').substr(0, 10)+'...'"></app-card-conversation>
+  <app-card-conversation *ngFor="let c of conversations; index as i" [select]="selectConversation(c)"  [imgUrl]="getUrl(c.participants)" [name]="getConversationName(c.participants)+'...'" (click)="changeConversation(c.id)"></app-card-conversation>
 </div>

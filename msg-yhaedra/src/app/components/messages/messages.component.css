@@ -1,0 +1,19 @@
+.message {
+  background-color: var(--blue-bg-ligth);
+  border-radius: 20px;
+  border: 1px solid white;
+  padding: 10px;
+  margin: 1em;
+  width: 25%;
+}
+
+h3 {
+  padding: 2%;
+  margin: 0;
+  font-weight: bold;
+  border-bottom: solid white 1px;
+}
+
+i {
+  font-size: small;
+}

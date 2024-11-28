@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {Observable, switchMap, throwError} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -20,19 +20,15 @@ export class ApiService {
 
     const httpOptions = {
       headers: new HttpHeaders({
-        Authorization: `Bearer ${authToken}`, // Ajouter le token si votre API le nécessite
+        Authorization: `Bearer ${authToken}`,
       }),
     };
 
     return this.http.get<any[]>(`${this.baseUrl}/users/${userId}/conversations`, httpOptions);
   }
 
-  createConversation(participants: string[]): Observable<any> {
+  getConversationById(id: string): Observable<any> {
     const authToken = localStorage.getItem('authToken');
-    const userId = localStorage.getItem('userId');
-    if(userId != null) {
-      participants.push(userId);
-    }
 
     const httpOptions = {
       headers: new HttpHeaders({
@@ -40,9 +36,32 @@ export class ApiService {
       }),
     };
 
-    const body = {participants};
+    return this.http.get(`${this.baseUrl}/conversations/${id}`, httpOptions);
+  }
 
-    return this.http.post(`${this.baseUrl}/conversations`, body, httpOptions);
+  createConversation(participants: string[]): Observable<any> {
+    const authToken = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    };
+
+    if (userId != null) {
+      return this.getUserById(userId).pipe(
+        switchMap((response: any) => {
+          participants.push(response.email);
+          const body = { participants };
+          console.log(participants, "taille: " + participants.length);
+          return this.http.post(`${this.baseUrl}/conversations`, body, httpOptions);
+        })
+      );
+    } else {
+      console.error("Impossible de créer la conversation : userId est null.");
+      return throwError(() => new Error("userId est requis pour créer une conversation."));
+    }
   }
 
 
@@ -52,6 +71,40 @@ export class ApiService {
 
   createUser(user: { name: string; email: string; password: string; imgUrl?: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}/users`, user);
+  }
+
+  getUserById(id: string){
+    return this.http.get((`${this.baseUrl}/users/${id}`))
+  }
+
+  getMessagesByConversationId(conversationId: string): Observable<any[]> {
+    const authToken = localStorage.getItem('authToken');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    };
+
+    return this.http.get<any[]>(`${this.baseUrl}/messages/conversation/${conversationId}`, httpOptions);
+  }
+
+  addMessageToConversation(conversationId: string, message: { content: string, authorId: string }): Observable<any> {
+    const authToken = localStorage.getItem('authToken');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    };
+
+    const body = {
+      conversationId: conversationId,
+      contenu: message.content,
+      expediteurId: message.authorId,
+    };
+
+    return this.http.post(`${this.baseUrl}/messages`, body, httpOptions);
   }
 
 }

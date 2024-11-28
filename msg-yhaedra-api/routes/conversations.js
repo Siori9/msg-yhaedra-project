@@ -1,21 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const { Conversation, User, Message } = require('../models');
+const {Op} = require("sequelize");
 
 router.post('/', async (req, res) => {
     const { participants } = req.body;
 
     try {
-        const users = await User.findAll({ where: { id: participants } });
+        const users = await User.findAll({
+            where: {
+                email: { [Op.in]: participants },
+            },
+        });
+
         if (users.length !== participants.length) {
-            return res.status(404).json({ message: 'Un ou plusieurs utilisateurs sont introuvables.' });
+            return res.status(404).json({
+                message: 'Un ou plusieurs utilisateurs sont introuvables.',
+                found: users.map((user) => user.email),
+                missing: participants.filter(
+                    (email) => !users.find((user) => user.email === email)
+                ),
+            });
         }
 
         const conversation = await Conversation.create();
 
         await conversation.addParticipants(users);
 
-        res.status(201).json(conversation);
+        res.status(201).json({
+            message: 'Conversation créée avec succès.',
+            conversation,
+            participants: users,
+        });
     } catch (error) {
         console.error('Erreur lors de la création de la conversation :', error);
         res.status(500).json({ message: 'Erreur serveur.' });

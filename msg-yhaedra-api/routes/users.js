@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { User, Conversation } = require('../models');
 const jwt = require('jsonwebtoken');
+const {Op} = require("sequelize");
 
 const JWT_SECRET = '123456789';
 
@@ -103,15 +104,16 @@ router.get('/:userId/conversations', async (req, res) => {
                 {
                     model: User,
                     as: 'participants',
-                    where: { id: userId },
-                    attributes: ['id', 'name'],
+                    attributes: ['id', 'name', 'imgUrl'],
                     through: { attributes: [] },
                 }
             ],
             order: [['updatedAt', 'DESC']],
         });
 
-        res.json(conversations);
+        res.json(conversations.filter((elem) =>
+            elem.participants.some((participant) => participant.id === userId)
+        ));
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erreur serveur.' });

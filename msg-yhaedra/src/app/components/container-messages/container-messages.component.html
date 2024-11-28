@@ -1,0 +1,3 @@
+<div id="messages" class="messages">
+  <app-messages *ngFor="let message of messages; let index = index;" [content]="message.content" [author]="message.author" [date]="message.date" [own]='message.own'></app-messages>
+</div>
